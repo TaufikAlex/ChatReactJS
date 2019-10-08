@@ -12,17 +12,15 @@ export default class ItemChat extends Component {
         content: []
     }
 
-    handleChange = (e) => {
-        this.setState({ fullname: e.target.value })
-    }
+
 
     componentDidMount() {
         // console.log('>>>>> sedang di pasang')
 
-        socket.on('receive-message', (err, data) => {
+        socket.on('receive-message', (data) => {
             console.log(data)
             this.setState({
-                content: data.data
+                content: [...this.state.content, data]
 
             });
         });
@@ -31,7 +29,7 @@ export default class ItemChat extends Component {
             .then(data => {
                 console.log('this is result from', data)
                 this.setState({
-                    content: data.data
+                    content: [...data.data]
                 })
             })
             .catch(err => {
@@ -45,17 +43,22 @@ export default class ItemChat extends Component {
         };
 
         fetch("http://localhost:4000/api/users/" + userId, requestOptions).then((response) => {
-          return response.json();
-        }).then(data => {
-            this.setState({
-                content: data.data
-            })
-        })
-        .catch(err => {
-            console.log(err)
-        })
+            return response.json();
+        }).then((result) => {
+            axios.get(`http://localhost:4000/api/users`)
+                .then(data => {
+                    this.setState({
+                        content: [...data.data]
+                    })
+                })
+        });
       }
 
+      onAdd = (item) => {
+        this.setState(prevState => ({
+            content: [...prevState.content, item]
+        }))
+    }
     render() {
         return (
 
@@ -73,7 +76,7 @@ export default class ItemChat extends Component {
                         </li>
                     )
                 })}
-                <Form />
+                <Form onAdd={this.onAdd} />
             </ul>
         )
     }

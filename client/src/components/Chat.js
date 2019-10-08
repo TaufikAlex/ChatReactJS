@@ -3,7 +3,6 @@ import Title from './Title';
 import Item from './Item'
 
 
-const axios = require('axios');
 class Chat extends Component {
     render() {
         return (

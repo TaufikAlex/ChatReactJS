@@ -1,47 +1,48 @@
-import React, { Component } from 'react';
+import React from 'react';
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:3001');
+// const socket = io('http://localhost:3001');
 
 const axios = require('axios');
-class Form extends Component {
+class Form extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            id: '',
             fullname: '',
             message: '',
             content: []
         }
 
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleChange = this.handleChange.bind(this);
-        // this.handleDelete = this.handleDelete.bind(this);
     }
 
     handleSubmit = e => {
-         e.preventDefault()
-        const api = `http://localhost:4000/api/users`
+        e.preventDefault()
+
+        const api = `http://localhost:4000/api/users/`
         const data = {
             fullname: this.state.fullname,
             message: this.state.message
         }
 
-        // send new message
-        // socket.emit('send-message', data);
+        const socket = io('http://localhost:3001');
+        socket.emit('addchat', data);
 
-        var socket = io.connect('http://localhost:3001');
-        socket.emit('send-message', function (data) {
-            console.log('this data >', data);
-            // socket.emit('send-message', { my: 'data' });
-        });
-
-        axios.post(api, data)
-    }
-
-
-    handleChange = (e) => {
-        this.setState({ fullname: e.target.value })
+        axios.post(api, data).then((result) => {
+            console.log(result.data.userCreated);
+            
+            let item = result.data.userCreated;
+            console.log('ini',item);
+            
+            let newData = { _id: item._id, fullname: item.fullname, message: item.message };
+            this.props.onAdd(newData)
+            this.setState({
+                fullname: '',
+                message: ''
+            });
+        }).catch(err => {
+            console.log(err)
+        })
     }
 
 

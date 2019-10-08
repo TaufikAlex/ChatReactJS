@@ -23,12 +23,12 @@ const io = require('socket.io')(connectSocket);
 
 io.on("connection", socket => {
 
-  // socket.on('send-message', msg => {
+  socket.on('send-message', data => {
 
-  //   console.log('Socket send-message >', msg);
+    console.log('Socket send-message >', data);
 
-  //   // socket.broadcast.emit("received", { message: msg });
-  //   io.emit('receive-message', msg);
+    socket.broadcast.emit("received", { content: data.data });
+    io.emit('receive-message', data);
 
     // function connect(connect) {
     //   console.log("connected correctly to the server");
@@ -41,7 +41,7 @@ io.on("connection", socket => {
     // };
     // connect()
   
-  // });
+  });
 });
 
 
