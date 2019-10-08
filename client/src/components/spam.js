@@ -1,11 +1,12 @@
-import React from 'react';
-import Title from './Tittle';
+import React, { Component } from 'react';
+import Title from './Title';
+// import ItemChat from './Item'
 import io from 'socket.io-client';
 
-const socket = io('http://localhost:4000/users');
+const socket = io('http://localhost:3001');
 
 const axios = require('axios');
-class Chat extends React.Component {
+class Chat extends Component {
     constructor(props) {
         super(props)
         this.state = {
@@ -17,10 +18,12 @@ class Chat extends React.Component {
 
         this.handleSubmit = this.handleSubmit.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        // this.handleDelete = this.handleDelete.bind(this);
     }
-
+//============GET DATA=============
     getData() {
-        socket.on('message', (err, data) => {
+        
+        socket.on('receive-message', (err, data) => {
             console.log(data)
             this.setState({
                 content: data.data
@@ -28,7 +31,7 @@ class Chat extends React.Component {
             });
         });
 
-        axios.get(`http://localhost:4000/users`)
+        axios.get(`http://localhost:4000/api/users`)
             .then(data => {
                 this.setState({
                     content: data.data
@@ -42,23 +45,25 @@ class Chat extends React.Component {
 
     handleSubmit = e => {
         //  e.preventDefault()
-        const api = `http://localhost:4000/users`
+        const api = `http://localhost:4000/api/users`
         const data = {
             fullname: this.state.fullname,
             message: this.state.message
         }
 
         // send new message
-        // socket.emit('news', data);
+        // socket.emit('send-message', data);
 
-        var socket = io.connect('http://localhost:4000/users');
-        socket.on('news', function (data) {
-            console.log(data);
-            socket.emit('news', { my: 'data' });
+        var socket = io.connect('http://localhost:3001');
+        socket.emit('send-message', function (data) {
+            console.log('this data >',data);
+            // socket.emit('send-message', { my: 'data' });
         });
 
         axios.post(api, data)
     }
+
+   
 
     handleChange = (e) => {
         this.setState({ fullname: e.target.value })
@@ -87,7 +92,7 @@ class Chat extends React.Component {
                             {this.state.content.map((item, index) => {
                                 return (
                                     <li className="timeline-inverted" key={index}>
-                                        <button className="timeline-badge danger" type="submit"><i className="fa fa-minus"></i></button>
+                                        <button className="timeline-badge danger" type="submit"><i className="fa fa-trash"></i></button>
                                         <div className="timeline-panel">
                                             <div className="timeline-body">
                                                 <h6 className="timeline-title">{item.fullname}</h6>
@@ -98,7 +103,7 @@ class Chat extends React.Component {
                                 )
                             })}
                             <li className="timeline-inverted">
-                                <div className="timeline-badge success"><i className="fa fa-plus"></i></div>
+                            <button className="timeline-badge success" type="submit"><i className="fa fa-plus"></i></button>
                                 <div className="timeline-panel">
                                     <form onSubmit={this.handleSubmit} >
                                         <div className="timeline-heading">

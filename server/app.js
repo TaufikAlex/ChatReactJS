@@ -12,10 +12,42 @@ mongoose.connect('mongodb://localhost/reactdb', {
   useNewUrlParser: true, useFindAndModify: false, useUnifiedTopology: true
 });;
 
+//Setting up express and adding socketIo middleware
+const app = express();
+const http = require("http").Server(app);
+clientPort = 3001;
+
+const connectSocket = http.listen(clientPort);
+
+const io = require('socket.io')(connectSocket);
+
+io.on("connection", socket => {
+
+  // socket.on('send-message', msg => {
+
+  //   console.log('Socket send-message >', msg);
+
+  //   // socket.broadcast.emit("received", { message: msg });
+  //   io.emit('receive-message', msg);
+
+    // function connect(connect) {
+    //   console.log("connected correctly to the server");
+      
+    //   let  chatMessage  =  new Chat({ message: msg, sender: "Anonymous"}) ;
+    //   chatMessage.save();
+
+    //   console.log('data db socket >', connect);
+      
+    // };
+    // connect()
+  
+  // });
+});
+
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
-var app = express();
 
 app.use(logger('dev'));
 app.use(express.json());
