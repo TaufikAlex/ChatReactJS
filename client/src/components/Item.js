@@ -24,6 +24,16 @@ export default class ItemChat extends Component {
 
             });
         });
+        socket.on('deleted-message', (data) => {
+            axios.get(`http://localhost:4000/api/users/`)
+                .then(data => {
+                    console.log(data)
+                    this.setState({
+                        content: [...data.userRemove]
+
+                    });
+                })
+        });
 
         axios.get(`http://localhost:4000/api/users`)
             .then(data => {
@@ -39,7 +49,7 @@ export default class ItemChat extends Component {
 
     handleClick = userId => {
         const requestOptions = {
-          method: 'delete'
+            method: 'delete'
         };
 
         fetch("http://localhost:4000/api/users/" + userId, requestOptions).then((response) => {
@@ -52,9 +62,9 @@ export default class ItemChat extends Component {
                     })
                 })
         });
-      }
-
-      onAdd = (item) => {
+    }
+    //Add userCreated prev
+    onAdd = (item) => {
         this.setState(prevState => ({
             content: [...prevState.content, item]
         }))

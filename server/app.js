@@ -3,7 +3,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors')
-const axios = require('axios');
 
 
 const mongoose = require('mongoose');
@@ -25,21 +24,12 @@ io.on("connection", socket => {
 
   socket.on('send-message', data => {
 
-    console.log('Socket send-message >', data);
-
-    socket.broadcast.emit("received", { content: data.data });
     io.emit('receive-message', data);
+  
+  });
+  socket.on('delete-message', data => {
 
-    // function connect(connect) {
-    //   console.log("connected correctly to the server");
-      
-    //   let  chatMessage  =  new Chat({ message: msg, sender: "Anonymous"}) ;
-    //   chatMessage.save();
-
-    //   console.log('data db socket >', connect);
-      
-    // };
-    // connect()
+    io.emit('deleted-message', data);
   
   });
 });

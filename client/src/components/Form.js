@@ -26,16 +26,10 @@ class Form extends React.Component {
         }
 
         const socket = io('http://localhost:3001');
-        socket.emit('addchat', data);
+        socket.emit('send-message', data);
 
         axios.post(api, data).then((result) => {
             console.log(result.data.userCreated);
-            
-            let item = result.data.userCreated;
-            console.log('ini',item);
-            
-            let newData = { _id: item._id, fullname: item.fullname, message: item.message };
-            this.props.onAdd(newData)
             this.setState({
                 fullname: '',
                 message: ''
