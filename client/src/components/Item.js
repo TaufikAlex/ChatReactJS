@@ -15,29 +15,23 @@ export default class ItemChat extends Component {
 
 
     componentDidMount() {
-        // console.log('>>>>> sedang di pasang')
-
         socket.on('receive-message', (data) => {
-            console.log(data)
+            console.log('ketika ngeadd',data)
             this.setState({
                 content: [...this.state.content, data]
 
             });
         });
-        socket.on('deleted-message', (data) => {
-            axios.get(`http://localhost:4000/api/users/`)
-                .then(data => {
-                    console.log(data)
-                    this.setState({
-                        content: [...data.userRemove]
 
-                    });
-                })
+        socket.on('deleted-message', (data) => {            
+            this.setState({
+                content: this.state.content.filter(item => item._id != data._id)
+
+            });
         });
 
         axios.get(`http://localhost:4000/api/users`)
             .then(data => {
-                console.log('this is result from', data)
                 this.setState({
                     content: [...data.data]
                 })
@@ -48,27 +42,23 @@ export default class ItemChat extends Component {
     }
 
     handleClick = userId => {
+
         const requestOptions = {
             method: 'delete'
         };
 
         fetch("http://localhost:4000/api/users/" + userId, requestOptions).then((response) => {
             return response.json();
-        }).then((result) => {
-            axios.get(`http://localhost:4000/api/users`)
-                .then(data => {
-                    this.setState({
-                        content: [...data.data]
-                    })
-                })
+        }).then((userRemove) => {
+            console.log(userRemove);
+            
+            const socket = io('http://localhost:3001/');
+            console.log("socket");
+            
+            socket.emit('delete-message',userRemove.userRemove);
         });
     }
-    //Add userCreated prev
-    onAdd = (item) => {
-        this.setState(prevState => ({
-            content: [...prevState.content, item]
-        }))
-    }
+    
     render() {
         return (
 
@@ -86,7 +76,7 @@ export default class ItemChat extends Component {
                         </li>
                     )
                 })}
-                <Form onAdd={this.onAdd} />
+                <Form  />
             </ul>
         )
     }

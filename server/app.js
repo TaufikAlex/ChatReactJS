@@ -27,9 +27,11 @@ io.on("connection", socket => {
     io.emit('receive-message', data);
   
   });
-  socket.on('delete-message', data => {
 
-    io.emit('deleted-message', data);
+  socket.on('delete-message', (userRemove) => {
+    console.log('this socket server >');
+    
+    io.emit('deleted-message',userRemove);
   
   });
 });

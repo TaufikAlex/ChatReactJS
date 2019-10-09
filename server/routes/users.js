@@ -29,7 +29,6 @@ router.post('/',function(req, res,next) {
 //===========Router Delete user=============
 router.delete('/:id', function(req,res, next) {
   User.findOneAndRemove({_id: req.params.id}).then((userRemove) =>{
-    console.log('this delete user>',user);
     
     res.status(201).json({userRemove})
     console.log('this user remove>',userRemove);
